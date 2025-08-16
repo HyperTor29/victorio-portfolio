@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victorio Cristiansa Putra - Full-Stack Developer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background: #0a0a0a;
+        }
+
+        /* Hero Section with 3D Background */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .hero .description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: #667eea;
+        }
+
+        /* Sections */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .about {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+        }
+
+        .experience {
+            background: #f8f9fa;
+        }
+
+        .projects {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            color: white;
+        }
+
+        .certifications {
+            background: #fff;
+        }
+
+        .skills {
+            background: #f8f9fa;
+        }
+
+        .contact {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        /* Experience Cards */
+        .experience-grid {
+            display: grid;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .experience-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experience-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .experience-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .date {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .position {
+            font-size: 1.1rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .project-description {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tag {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Certifications Section */
+        .certifications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .cert-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .cert-header {
+            margin-bottom: 1rem;
+        }
+
+        .cert-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .cert-provider {
+            color: #667eea;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .cert-date {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .skill-category {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+        }
+
+        .skill-category h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .skill-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav {
+                top: 10px;
+                right: 10px;
+                padding: 8px 15px;
+            }
+
+            .nav a {
+                margin: 0 10px;
+                font-size: 0.9rem;
+            }
+
+            .experience-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <canvas id="bg-canvas"></canvas>
+        <div class="hero-content">
+            <h1>Victorio Cristiansa Putra</h1>
+            <p class="subtitle">Full-Stack Web Developer</p>
+            <p class="description">Passionate software engineer creating efficient, user-centered solutions that solve real-world problems. Experienced in Laravel, PHP, and modern web technologies.</p>
+            <div class="cta-buttons">
+                <a href="#contact" class="btn btn-primary">Get In Touch</a>
+                <a href="#projects" class="btn btn-secondary">View My Work</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about">
+        <div class="container">
+            <h2 class="section-title fade-in">About Me</h2>
+            <div class="fade-in" style="max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.1rem; opacity: 0.9;">
+                <p style="margin-bottom: 1.5rem;">
+                    A passionate and committed software engineering enthusiast with a strong background in full-stack web development and system design. Having built real-world web applications from the ground up, I take pride in creating efficient, user-centered solutions that solve practical problems.
+                </p>
+                <p>
+                    My final university project in developing a web-based operational system sharpened my technical and analytical skills. Eager to learn and grow, I thrive in collaborative environments and aim to contribute meaningfully to innovative, impact-driven teams.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="section experience">
+        <div class="container">
+            <h2 class="section-title fade-in">Experience</h2>
+            <div class="experience-grid">
+                <div class="experience-card fade-in">
+                    <div class="experience-header">
+                        <div>
+                            <div class="company-name">PT. Jasa Marga (Persero) Tbk</div>
+                            <div class="position">Full-Stack Web Developer - Internship</div>
+                        </div>
+                        <div class="date">Sep 2024 – Dec 2024</div>
+                    </div>
+                    <ul style="padding-left: 1rem;">
+                        <li>Developed full-stack web applications leveraging the Laravel framework with PHP backend logic</li>
+                        <li>Implemented Filament to build robust and responsive administrative interfaces</li>
+                        <li>Utilized MySQL as the primary database system, managing data integrity and security through phpMyAdmin</li>
+                        <li>Created a robust platform that excelled technically and offered an intuitive user experience</li>
+                    </ul>
+                </div>
+
+                <div class="experience-card fade-in">
+                    <div class="experience-header">
+                        <div>
+                            <div class="company-name">Biro Psikologi Poros</div>
+                            <div class="position">Web Developer - Internship</div>
+                        </div>
+                        <div class="date">Jan 2024 – Mar 2024</div>
+                    </div>
+                    <ul style="padding-left: 1rem;">
+                        <li>Developed websites using Laravel framework with PHP for efficient development</li>
+                        <li>Implemented Tailwind CSS for responsive and visually appealing user interfaces</li>
+                        <li>Utilized MySQL database system ensuring data integrity and security</li>
+                        <li>Collaborated with teams to create a robust platform with engaging user experience</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section projects">
+        <div class="container">
+            <h2 class="section-title fade-in">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card fade-in">
+                    <h3 class="project-title">Sistem Informasi Tertib Izin Lintas</h3>
+                    <p class="project-description">
+                        Designed and developed a web-based information system to manage and record traffic permit data efficiently. Implemented features for secure data entry, role-based access control, and real-time status tracking.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Laravel</span>
+                        <span class="tech-tag">Filament</span>
+                        <span class="tech-tag">PHP</span>
+                        <span class="tech-tag">MySQL</span>
+                    </div>
+                </div>
+
+                <div class="project-card fade-in">
+                    <h3 class="project-title">Aplikasi Psikotes Berbasis Website</h3>
+                    <p class="project-description">
+                        Web-based information system for managing intelligence and aptitude test questions with automatic question randomization feature for each client's test session.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Laravel</span>
+                        <span class="tech-tag">Tailwind CSS</span>
+                        <span class="tech-tag">PHP</span>
+                        <span class="tech-tag">MySQL</span>
+                    </div>
+                </div>
+
+                <div class="project-card fade-in">
+                    <h3 class="project-title">Informatics Department Monitoring System</h3>
+                    <p class="project-description">
+                        Website-based information system to monitor academic achievement data and student study progress for decision making in monitoring and evaluating course progress.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Laravel</span>
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">PHP</span>
+                        <span class="tech-tag">MySQL</span>
+                    </div>
+                </div>
+
+                <div class="project-card fade-in">
+                    <h3 class="project-title">Titanic Survival Prediction</h3>
+                    <p class="project-description">
+                        Machine learning project using Random Forest algorithm to predict survival likelihood in the Titanic dataset with Flask web visualization.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Machine Learning</span>
+                        <span class="tech-tag">HTML/CSS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section id="certifications" class="section certifications">
+        <div class="container">
+            <h2 class="section-title fade-in">Certifications</h2>
+            <div class="certifications-grid">
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Magenta BUMN PT. Jasa Marga (Persero) Tbk</div>
+                        <div class="cert-provider">PT. Jasa Marga Tbk</div>
+                    </div>
+                    <div class="cert-date">Februari 2025 - Sekarang (7 bulan)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Cloud Practitioner Essentials (Belajar Dasar AWS Cloud)</div>
+                        <div class="cert-provider">Dicoding</div>
+                    </div>
+                    <div class="cert-date">Mei 2024 - Mei 2027 (3 tahun)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Oracle Primavera P6 Professional Project Management Fundamentals</div>
+                        <div class="cert-provider">Oracle</div>
+                    </div>
+                    <div class="cert-date">Maret 2024 - Sekarang (setahun)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Belajar Dasar Visualisasi Data</div>
+                        <div class="cert-provider">Dicoding</div>
+                    </div>
+                    <div class="cert-date">Januari 2024 - Januari 2027 (3 tahun)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Java Programming</div>
+                        <div class="cert-provider">Oracle</div>
+                    </div>
+                    <div class="cert-date">Juni 2023 - Sekarang (2 tahun)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Database Programming with PL/SQL</div>
+                        <div class="cert-provider">Oracle</div>
+                    </div>
+                    <div class="cert-date">Mei 2023 - Sekarang (2 tahun)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Database Programming with SQL</div>
+                        <div class="cert-provider">Oracle</div>
+                    </div>
+                    <div class="cert-date">Mei 2023 - Sekarang (2 tahun)</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-header">
+                        <div class="cert-title">Python Progate Bootcamp</div>
+                        <div class="cert-provider">Progate</div>
+                    </div>
+                    <div class="cert-date">September 2021 - Sekarang (4 tahun)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section skills">
+        <div class="container">
+            <h2 class="section-title fade-in">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category fade-in">
+                    <h3>Programming Languages</h3>
+                    <div class="skill-list">
+                        <span class="skill-item">Python</span>
+                        <span class="skill-item">PHP</span>
+                        <span class="skill-item">JavaScript</span>
+                        <span class="skill-item">SQL</span>
+                    </div>
+                </div>
+
+                <div class="skill-category fade-in">
+                    <h3>Frameworks</h3>
+                    <div class="skill-list">
+                        <span class="skill-item">Laravel</span>
+                        <span class="skill-item">Filament</span>
+                        <span class="skill-item">Flask</span>
+                        <span class="skill-item">Tailwind CSS</span>
+                    </div>
+                </div>
+
+                <div class="skill-category fade-in">
+                    <h3>Databases</h3>
+                    <div class="skill-list">
+                        <span class="skill-item">MySQL</span>
+                        <span class="skill-item">phpMyAdmin</span>
+                    </div>
+                </div>
+
+                <div class="skill-category fade-in">
+                    <h3>Tools & Platforms</h3>
+                    <div class="skill-list">
+                        <span class="skill-item">Git</span>
+                        <span class="skill-item">Docker</span>
+                        <span class="skill-item">VS Code</span>
+                        <span class="skill-item">Figma</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="contact-content">
+                <h2 class="section-title fade-in">Let's Work Together</h2>
+                <p class="fade-in" style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                    I'm always interested in new opportunities and exciting projects. Let's discuss how we can create something amazing together.
+                </p>
+                <div class="contact-info fade-in">
+                    <a href="mailto:victorio.cristiansa186@gmail.com" class="contact-item">
+                        <span>📧</span>
+                        <span>victorio.cristiansa186@gmail.com</span>
+                    </a>
+                    <a href="tel:+6289638327769" class="contact-item">
+                        <span>📱</span>
+                        <span>+62 896 3832 7769</span>
+                    </a>
+                    <span class="contact-item">
+                        <span>📍</span>
+                        <span>Semarang, Indonesia</span>
+                    </span>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <a href="mailto:victorio.cristiansa186@gmail.com" class="btn btn-secondary">Send Message</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 3D Background Animation
+        let scene, camera, renderer, particles;
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Create particles
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 1500;
+            const positions = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 2000;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                color: 0x667eea,
+                size: 2,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 1000;
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particles.rotation.x += 0.001;
+            particles.rotation.y += 0.002;
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
+        });
+    </script>
+</body>
+</html>
